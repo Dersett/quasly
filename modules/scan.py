@@ -1,5 +1,7 @@
 import subprocess 
+import re 
 
+# scanning function 
 def rust_scan(target_ip):
     print("Starting RustScan on: " + target_ip)
     
@@ -28,14 +30,19 @@ def rust_scan(target_ip):
         print("Unable to locate RustScan, Please ensure RustScan is installed and in your system")
         return None 
     
-# --- Testing the function --- Delete later becuase we will be making a main.py which will call all the function including this and then also need to 
-# make main one to work like a command line tool where you can specify the target and the scan type and then it will call the appropriate function and then print the results in a nice format.
-if __name__ == "__main__":
+# extracting ports from raw rustscan text function
+def parse_ports(raw_text):
     
-    target = "127.0.0.1" # Replace with your test target
-    raw_output = rust_scan(target)
     
-    if raw_output:
-        print("\n--- Raw Output ---")
-        print(raw_output)
+    print("[*] Parsing output for open ports")
     
+    match = re.search(r'\[(.*?)\]', raw_text)
+        
+    if match:
+        ports_string = match.group(1)
+        ports_list = ports_string.split(',')
+        clean_ports = [port.strip() for port in ports_list if port.strip()]
+        return clean_ports
+    
+    print("[-] No open ports found in the output.")
+    return []

@@ -20,16 +20,16 @@ def run_httpx(target_ip, port_list):
     # if using kali linux instead of "httpx" use "httpx-toolkit"
     # sudo apt install httpx-toolkit 
     command = [
-        "httpx",  # change this to httpx-toolkit if using kali linux
-        "-u", target_ip,  # target ip address
+        "httpx-toolkit",  # change this to httpx-toolkit if using kali linux else keep httpx 
+          # target ip address removed to fix httpx not finding  web servers 
         "-p", ports_str,  # list of ports scanned from rustscan 
         "-silent",  # dont print banners and logos from httpx 
         "-json"  # telling to output in json format    
     ]
 
     try: 
-        outcome = subprocess.run(command, capture_output=True, text=True, check=True)
-        live_urls = []
+        outcome = subprocess.run(command, input=target_ip, capture_output=True, text=True, check=True)
+        live_urls = [] # added target ip here to fix the issuue of not finding web servers 
         
         # httpx ouptuts one json disctionary per line 
         for line in outcome.stdout.splitlines():

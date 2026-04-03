@@ -1,0 +1,2 @@
+Theres no python code dependencies, just linux tool dependencies that needed to be installed, 
+Read the readme file and simply run the setup.sh to download all the tools needed
