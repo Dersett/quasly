@@ -44,7 +44,7 @@ def run_httpx(target_ip, port_list):
                     continue
         
         print(f"[+] httpx found {len(live_urls)} live web servers!")
-        return live_urls
+        return live_urls  # httpx output live url for other tools to process 
 
     except subprocess.CalledProcessError as e:
         print(f"[-] httpx failed with error: {e.stderr}")

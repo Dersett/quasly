@@ -4,9 +4,8 @@ import os
 import re 
 
 from modules import scan  # add the rest of the modules later 
-
 from modules.httpx import run_httpx
-
+from modules.katana import run_katana
 
 def check_priv():
     # checks if the script is being run with root privileges, if not it exits with a message 
@@ -72,7 +71,23 @@ def main():
     print(f"\n[+] Pipeline Success! Live URLs ready for the next phase:")
     for url in live_urls:
         print(f"    -> {url}")
+        
+    # 3.1 Katana
+    print("\nPHASE 3: Katana Crawling")
+    all_endpoints = run_katana(live_urls)
 
+    if not all_endpoints:
+        print("[-] Pipeline finished: Could not crawl any endpoints.")
+        sys.exit(0)
+        
+    print(f"\n[+] Pipeline Success! Here is a sample of discovered endpoints:")
+    
+    # Print just the first 10 so we don't flood the terminal screen
+    for endpoint in all_endpoints[:10]:
+        print(f"    -> {endpoint}")
+        
+    if len(all_endpoints) > 10:
+        print(f"    ... and {len(all_endpoints) - 10} more.")
 
 if __name__ == "__main__":
     # This prevents main() from running automatically if you ever 

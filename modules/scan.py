@@ -18,6 +18,7 @@ def rust_scan(target_ip):
         
         # printing out the results 
         print("RustScan completed successfully.")  
+        print(outcome.stdout)
         return outcome.stdout 
     
     except subprocess.CalledProcessError as e:
