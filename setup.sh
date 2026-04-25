@@ -37,16 +37,28 @@ else
     echo "[+] RustScan is already installed!"
 fi
 
-# 5 Installing Katana
-# depending on the system os, you may need to set up the GOPATH and PATH variables for Go. 
+# 5. Installing Katana and Go environment
+echo "[*] Setting up Golang environment variables..."
 echo 'export GOPATH=$HOME/go' >> ~/.zshrc
 echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.zshrc
-source ~/.zshrc
-echo "installing golang-go (required for Katana)"
+
+echo "[*] Installing golang-go..."
 sudo apt install golang-go -y
-echo "[*] Installing Katana"
+
+echo "[*] Installing Katana crawler..."
 sudo apt install katana -y
+
+# 6. Installing Nuclei & Advanced Dependencies
+echo "[*] Installing Nuclei and advanced modules (unzip, chromium, libpcap)..."
+sudo apt install nuclei unzip chromium libpcap-dev -y
+
+echo "[*] Initializing Nuclei and downloading the latest vulnerability templates..."
+# This pulls the massive library of attack signatures down to the user's machine
+nuclei -update-templates
 
 echo "========================================="
 echo "=        Installation Complete! :)      ="
 echo "========================================="
+echo ""
+echo "[!] IMPORTANT: Please close this terminal and open a new one,"
+echo "    OR run 'source ~/.zshrc' before running Quasly for the first time."

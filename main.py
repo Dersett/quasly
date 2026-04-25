@@ -6,6 +6,7 @@ import re
 from modules import scan  # add the rest of the modules later 
 from modules.httpx import run_httpx
 from modules.katana import run_katana
+from modules.nuclei_nikto import run_nuclei
 
 def check_priv():
     # checks if the script is being run with root privileges, if not it exits with a message 
@@ -89,7 +90,48 @@ def main():
     if len(all_endpoints) > 10:
         print(f"    ... and {len(all_endpoints) - 10} more.")
 
+    # 4.1 Nuclei (make sure the katana output is there have all output of each module specified)
+    # --- SCAN PROFILE SELECTION ---
+    print("=========================================")
+    print("=      Select Nuclei Scan Profile   :)  =")
+    print("=========================================")
+    print("[1] Fast Scan (Base URLs only - Recommended)")
+    print("[2] Deep Scan (All Katana Endpoints - Very Slow)")
+    print("[3] Custom Scan (Provide specific URLs manually)")
+    
+    scan_choice = input("\nSelect an option [1/2/3]: ").strip()
+    
+    nuclei_targets = live_urls # Default to Fast Scan
+    
+    
+    if scan_choice == "2":
+        if all_endpoints:
+            nuclei_targets = all_endpoints
+            print(f"[*] Deep Scan initialized. Targeting {len(nuclei_targets)} endpoints...")
+        else:
+            print("[-] Katana didn't find extra endpoints. Falling back to Fast Scan.")
+    elif scan_choice == "3":
+        custom_input = input("\nEnter custom URLs (separated by commas): ").strip()
+        nuclei_targets = [url.strip() for url in custom_input.split(",") if url.strip()]
+        print(f"[*] Custom Scan initialized. Targeting {len(nuclei_targets)} custom URLs...")
+    else:
+        print(f"[*] Fast Scan initialized. Targeting {len(nuclei_targets)} base URLs...")
+        
+        
+    # nuclei execution 
+    print("\n--- PHASE 4: Vulnerability Scanning (Nuclei) ---")
+    findings = run_nuclei(nuclei_targets)
+    
+    if not findings:
+        print("[+] Target looks secure. No vulnerabilities found by Nuclei.")
+    else:
+        print(f"[!] Found {len(findings)} potential vulnerabilities!")
+        for finding in findings:
+            print(f"    -> {finding}")
+
 if __name__ == "__main__":
     # This prevents main() from running automatically if you ever 
     # import this file into another project later.
     main()
+    
+    
